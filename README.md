@@ -33,6 +33,26 @@ Invalid input throws an `Error` with a message describing what was wrong
 (wrong length, bad area code, bad exchange code) rather than silently
 returning something incorrect.
 
+## CLI
+
+```
+node dist/cli.js (555) 123-4567
++15551234567
+
+node dist/cli.js --national +15551234567
+(555) 123-4567
+
+node dist/cli.js 555-123-4567 1-555-999-9999
++15551234567
++15559999999
+```
+
+Takes one or more numbers as arguments and converts each on its own line.
+Defaults to E.164 output; pass `--national` for the display format instead.
+A number that fails to parse prints its error to stderr and the process
+exits non-zero, but the rest of the batch still runs. If installed globally
+or linked (`npm link`), the same thing is available as `nanp-convert`.
+
 ## What counts as valid
 
 NANP numbers are ten digits, `NXX-NXX-XXXX`, where `N` is 2-9 and `X` is
@@ -51,7 +71,6 @@ Compiles `src/` to `dist/` with the TypeScript compiler. No other build step.
 
 ## Roadmap
 
-- CLI entry point for converting numbers from the command line
 - International E.123 display format, not just NANP national format
 - A second numbering plan (E.164 is universal, but national formats are
   country-specific -- UK and Germany are the obvious next ones)
