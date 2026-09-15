@@ -63,3 +63,11 @@ export function formatNanpNational(n: NanpNumber): string {
 export function formatNanpE164(n: NanpNumber): string {
   return `+${NANP_COUNTRY_CODE}${n.areaCode}${n.exchangeCode}${n.subscriberNumber}`;
 }
+
+// ITU-T E.123 international format: country code plus national number,
+// groups separated by single spaces, no parentheses or dashes. This is
+// the form meant to be dialable and readable regardless of the reader's
+// own country, as opposed to formatNanpNational which is US/Canada-local.
+export function formatNanpE123(n: NanpNumber): string {
+  return `+${NANP_COUNTRY_CODE} ${n.areaCode} ${n.exchangeCode} ${n.subscriberNumber}`;
+}

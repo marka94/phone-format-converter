@@ -16,7 +16,7 @@ covered yet.
 ## Usage
 
 ```ts
-import { toE164, toNational, isValidNanpNumber } from './src/index.js';
+import { toE164, toNational, toE123, isValidNanpNumber } from './src/index.js';
 
 toE164('(555) 123-4567');        // '+15551234567'
 toE164('555.123.4567');          // '+15551234567'
@@ -24,6 +24,8 @@ toE164('1-555-123-4567');        // '+15551234567'
 
 toNational('+15551234567');      // '(555) 123-4567'
 toNational('5551234567');        // '(555) 123-4567'
+
+toE123('5551234567');            // '+1 555 123 4567'
 
 isValidNanpNumber('555-123-4567'); // true
 isValidNanpNumber('123-456-7890'); // false -- area code can't start with 1
@@ -42,13 +44,16 @@ node dist/cli.js (555) 123-4567
 node dist/cli.js --national +15551234567
 (555) 123-4567
 
+node dist/cli.js --e123 5551234567
++1 555 123 4567
+
 node dist/cli.js 555-123-4567 1-555-999-9999
 +15551234567
 +15559999999
 ```
 
 Takes one or more numbers as arguments and converts each on its own line.
-Defaults to E.164 output; pass `--national` for the display format instead.
+Defaults to E.164 output; pass `--national` or `--e123` for the other formats.
 A number that fails to parse prints its error to stderr and the process
 exits non-zero, but the rest of the batch still runs. If installed globally
 or linked (`npm link`), the same thing is available as `nanp-convert`.
@@ -71,7 +76,6 @@ Compiles `src/` to `dist/` with the TypeScript compiler. No other build step.
 
 ## Roadmap
 
-- International E.123 display format, not just NANP national format
 - A second numbering plan (E.164 is universal, but national formats are
   country-specific -- UK and Germany are the obvious next ones)
 - Batch conversion over a CSV or newline-delimited input file

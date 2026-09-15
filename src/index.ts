@@ -1,4 +1,4 @@
-import { parseNanp, formatNanpNational, formatNanpE164 } from './nanp.js';
+import { parseNanp, formatNanpNational, formatNanpE164, formatNanpE123 } from './nanp.js';
 import type { NanpNumber } from './nanp.js';
 
 export type { NanpNumber };
@@ -18,6 +18,15 @@ export function toE164(input: string): string {
  */
 export function toNational(input: string): string {
   return formatNanpNational(parseNanp(input));
+}
+
+/**
+ * Converts a NANP phone number to ITU-T E.123 international format
+ * (e.g. "+1 555 123 4567"), the country-neutral form meant to be
+ * readable and dialable regardless of where the reader is.
+ */
+export function toE123(input: string): string {
+  return formatNanpE123(parseNanp(input));
 }
 
 /** True if the input parses as a valid NANP number, false otherwise. */
