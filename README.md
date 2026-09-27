@@ -7,11 +7,11 @@ and copy-pasted contact lists end up with a mix of both plus every
 punctuation variant in between (`555.123.4567`, `555-123-4567`,
 `1 (555) 123-4567`...).
 
-This library normalizes and converts between those two shapes. Right now it
-only covers the North American Numbering Plan (NANP) -- the US, Canada, and
-the other +1 countries -- since that's what most people mean by "phone
-number" when they haven't said otherwise. See Roadmap below for what's not
-covered yet.
+This library normalizes and converts between those two shapes. It covers the
+North American Numbering Plan (NANP) -- the US, Canada, and the other +1
+countries -- since that's what most people mean by "phone number" when they
+haven't said otherwise, plus a second numbering plan for the UK. See Roadmap
+below for what's not covered yet.
 
 ## Usage
 
@@ -30,6 +30,25 @@ toE123('5551234567');            // '+1 555 123 4567'
 isValidNanpNumber('555-123-4567'); // true
 isValidNanpNumber('123-456-7890'); // false -- area code can't start with 1
 ```
+
+```ts
+import { toUkE164, toUkNational, toUkE123, isValidUkNumber } from './src/index.js';
+
+toUkE164('07911 123456');        // '+447911123456'
+toUkE164('020 7946 0958');       // '+442079460958'
+
+toUkNational('+447911123456');   // '07911 123456'
+toUkNational('+442079460958');   // '020 7946 0958'
+
+toUkE123('07911123456');         // '+44 7911 123456'
+
+isValidUkNumber('0113 234 5678'); // true
+```
+
+UK area code lengths vary (2 digits for London, up to 5 for a handful of
+small exchanges); this library only special-cases mobiles and London and
+falls back to the 3-3-4 grouping that covers the rest of the country. See
+`src/uk.ts` for the exact scope.
 
 Invalid input throws an `Error` with a message describing what was wrong
 (wrong length, bad area code, bad exchange code) rather than silently
@@ -50,10 +69,14 @@ node dist/cli.js --e123 5551234567
 node dist/cli.js 555-123-4567 1-555-999-9999
 +15551234567
 +15559999999
+
+node dist/cli.js --plan=uk --national +447911123456
+07911 123456
 ```
 
 Takes one or more numbers as arguments and converts each on its own line.
-Defaults to E.164 output; pass `--national` or `--e123` for the other formats.
+Defaults to NANP, E.164 output; pass `--plan=uk` to parse as UK numbers
+instead, and `--national` or `--e123` for the other output formats.
 A number that fails to parse prints its error to stderr and the process
 exits non-zero, but the rest of the batch still runs. If installed globally
 or linked (`npm link`), the same thing is available as `nanp-convert`.
@@ -76,8 +99,6 @@ Compiles `src/` to `dist/` with the TypeScript compiler. No other build step.
 
 ## Roadmap
 
-- A second numbering plan (E.164 is universal, but national formats are
-  country-specific -- UK and Germany are the obvious next ones)
 - Batch conversion over a CSV or newline-delimited input file
 - Basic test suite
 
